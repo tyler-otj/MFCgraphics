@@ -212,11 +212,7 @@ void Window::onUpdate() {
 	COLORREF* buff = reinterpret_cast<COLORREF*>(calloc(m_width * m_height, sizeof(COLORREF)));
 
 
-
 	//
-	//for (int i = 0; i < m_width * m_height; ++i) {
-	//	buff[i] = blue;
-	//}
 	mat4x4 const rotZ = mat4x4::rotateZ(fTheta * 0.5f);
 	mat4x4 const rotX = mat4x4::rotateX(fTheta);
 
