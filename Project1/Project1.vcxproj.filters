@@ -1,0 +1,53 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Resource Files">
+      <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
+      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
+    </Filter>
+    <Filter Include="Window">
+      <UniqueIdentifier>{0c2c6508-a00f-4c61-89bc-787515b2604c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="structures">
+      <UniqueIdentifier>{ad474062-5b29-4bde-9835-f42f5d92bc8d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="structures\shapeComponents">
+      <UniqueIdentifier>{ca324eed-5406-47cd-adc5-5d1cb2183175}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="structures\shapes">
+      <UniqueIdentifier>{c68bd1ae-5fe8-4e31-bff8-8c6164e0cc28}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="Window.cpp">
+      <Filter>Window</Filter>
+    </ClCompile>
+    <ClCompile Include="main.cpp" />
+    <ClCompile Include="structures\shapeComponents\mat4x4.cpp">
+      <Filter>structures\shapeComponents</Filter>
+    </ClCompile>
+    <ClCompile Include="structures\shapeComponents\vec3d.cpp">
+      <Filter>structures\shapeComponents</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="Window.h">
+      <Filter>Window</Filter>
+    </ClInclude>
+    <ClInclude Include="structures\shapes\canonicalShapes.h">
+      <Filter>structures\shapes</Filter>
+    </ClInclude>
+    <ClInclude Include="structures\shapes\shapeBase.h">
+      <Filter>structures\shapes</Filter>
+    </ClInclude>
+    <ClInclude Include="structures\shapeComponents\mat4x4.h">
+      <Filter>structures\shapeComponents</Filter>
+    </ClInclude>
+    <ClInclude Include="structures\shapeComponents\vec3d.h">
+      <Filter>structures\shapeComponents</Filter>
+    </ClInclude>
+    <ClInclude Include="structures\shapes\shapes.h">
+      <Filter>structures\shapes</Filter>
+    </ClInclude>
+  </ItemGroup>
+</Project>
