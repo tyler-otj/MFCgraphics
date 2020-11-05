@@ -126,8 +126,6 @@ bool Window::broadcast() {
 		DispatchMessage(&msg);
 	}
 
-	Sleep(1); //TODO: why is this needed?
-
 	return true;
 }
 
@@ -241,7 +239,7 @@ void Window::onUpdate() {
 
 	//
 	++m_elapsedTime;
-	float fTheta = 0.02f * m_elapsedTime;
+	float fTheta = 0.03f * m_elapsedTime;
 
 	std::vector<triangle> triToRaster;
 
