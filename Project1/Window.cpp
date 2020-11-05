@@ -1,6 +1,13 @@
 #include "Window.h"
 #include <stdexcept>
 #include <algorithm>
+#include <string>
+#include <sstream>
+#include <iomanip>
+
+namespace {
+	static const std::string title("Cool Gfx Bro");
+}
 
 Window::Window() {}
 Window::~Window() {}
@@ -59,7 +66,7 @@ bool Window::init() {
 	(
 		WS_EX_OVERLAPPEDWINDOW, 
 		"MyWindowClass", 
-		"Test Application",
+		&title[0],
 		WS_OVERLAPPEDWINDOW, 
 		CW_USEDEFAULT, //initial x starting pos
 		CW_USEDEFAULT, //initial y starting pos
@@ -98,6 +105,9 @@ bool Window::init() {
 
 	lightDirection = { 0.0f, 0.0f, -1.0f };
 	lightDirection.normalize();
+
+	tp1 = std::chrono::system_clock::now();
+	tp2 = std::chrono::system_clock::now();
 	//
 
 
@@ -202,7 +212,24 @@ namespace {
 	}
 }
 
+void Window::set_title_with_fps() {
+	tp2 = std::chrono::system_clock::now();
+	std::chrono::duration<float> elapsedTime = tp2 - tp1;
+	tp1 = tp2;
+	float const fElapsedTime = elapsedTime.count();
+	float const fps = 1.0f / fElapsedTime;
+
+	std::ostringstream ss;
+	ss << title << ' ' << std::setprecision(4) << fps;
+
+	if (!SetWindowTextA(m_hwnd, ss.str().c_str())) {
+		throw std::runtime_error("Unable to set window title.");
+	}
+}
+
 void Window::onUpdate() {
+	set_title_with_fps();
+
 	HDC const hdc = GetDC(m_hwnd);
 	if (hdc == NULL) {
 		throw std::runtime_error("Could not recieve device context");
@@ -213,9 +240,6 @@ void Window::onUpdate() {
 
 
 	//
-	mat4x4 const rotZ = mat4x4::rotateZ(fTheta * 0.5f);
-	mat4x4 const rotX = mat4x4::rotateX(fTheta);
-
 	++m_elapsedTime;
 	float fTheta = 0.02f * m_elapsedTime;
 

@@ -2,6 +2,7 @@
 #include "structures/shapes/shapes.h"
 #include "structures/shapes/canonicalShapes.h"
 
+#include <chrono>
 #include <Windows.h>
 
 class Window{
@@ -13,6 +14,11 @@ private:
 	vec3d lightDirection;
 	float m_elapsedTime;
 
+	//fps claculations
+	std::chrono::time_point<std::chrono::system_clock> tp1;
+	std::chrono::time_point<std::chrono::system_clock> tp2;
+
+	void set_title_with_fps();
 protected:
 	HWND m_hwnd;
 	bool m_is_run;
