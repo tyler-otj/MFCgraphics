@@ -64,13 +64,13 @@ bool Window::init() {
 	//Creation of the window
 	m_hwnd = ::CreateWindowEx
 	(
-		WS_EX_OVERLAPPEDWINDOW, 
-		"MyWindowClass", 
+		WS_EX_OVERLAPPEDWINDOW,
+		"MyWindowClass",
 		&title[0],
-		WS_OVERLAPPEDWINDOW, 
+		WS_OVERLAPPEDWINDOW,
 		CW_USEDEFAULT, //initial x starting pos
 		CW_USEDEFAULT, //initial y starting pos
-		m_width, 
+		m_width,
 		m_height,
 		NULL, //hwnd of parent
 		NULL, //hwnd to menu
@@ -92,7 +92,11 @@ bool Window::init() {
 
 	//
 	m_elapsedTime = 0.0f;
-	meshCube = canonicalShapes::getCanonicalCube();
+	//meshCube = canonicalShapes::getCanonicalCube();
+
+	if (!meshCube.load_object_file("C:\\Users\\tyler\\Desktop\\objFiles\\1dship.obj")) {
+		throw std::runtime_error("Unable to load object file");
+	}
 
 	//Projection Matrix
 	float const fNear = 0.1f;
@@ -217,6 +221,10 @@ void Window::set_title_with_fps() {
 	float const fElapsedTime = elapsedTime.count();
 	float const fps = 1.0f / fElapsedTime;
 
+	if (fps < 3.0f) {
+		throw std::runtime_error("FPS too low! Exiting..");
+	}
+
 	std::ostringstream ss;
 	ss << title << ' ' << std::setprecision(4) << fps;
 
@@ -246,9 +254,10 @@ void Window::onUpdate() {
 	for (int i = meshCube.tris.size() - 1; i >= 0; --i) {
 		/*triangle working = meshCube.tris.at(i).getTriMultByMatrix(rotX);*/
 		triangle working = meshCube.tris.at(i).getTriMultByMatrix(mat4x4::rotateY(fTheta));
+		//triangle working = meshCube.tris.at(i).getTriMultByMatrix(mat4x4::rotateY(0.5));
 		working.multByMatrix(mat4x4::rotateX(0.5));
 
-		working.translateZ(3.0f);
+		working.translateZ(36.0f);
 
 		vec3d normal = working.getNormal();
 
@@ -274,9 +283,6 @@ void Window::onUpdate() {
 		drawTriangle(t, buff, m_width, m_height);
 	}
 	//
-
-
-
 
 
 	HBITMAP map = CreateBitmap(m_width, m_height,
