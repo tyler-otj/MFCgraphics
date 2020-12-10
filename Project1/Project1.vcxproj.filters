@@ -17,6 +17,12 @@
     <Filter Include="structures\shapes">
       <UniqueIdentifier>{c68bd1ae-5fe8-4e31-bff8-8c6164e0cc28}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Util">
+      <UniqueIdentifier>{47a5f49f-10de-4e65-a6a3-8ba85b9851c7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="graphics">
+      <UniqueIdentifier>{4c2c0699-e9ff-4846-a181-45fd1492a7b4}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Window.cpp">
@@ -28,6 +34,12 @@
     </ClCompile>
     <ClCompile Include="structures\shapeComponents\vec3d.cpp">
       <Filter>structures\shapeComponents</Filter>
+    </ClCompile>
+    <ClCompile Include="fps_calculator.cpp">
+      <Filter>Util</Filter>
+    </ClCompile>
+    <ClCompile Include="ShapeDrawer.cpp">
+      <Filter>graphics</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -48,6 +60,15 @@
     </ClInclude>
     <ClInclude Include="structures\shapes\shapes.h">
       <Filter>structures\shapes</Filter>
+    </ClInclude>
+    <ClInclude Include="color.h">
+      <Filter>Util</Filter>
+    </ClInclude>
+    <ClInclude Include="fps_calculator.h">
+      <Filter>Util</Filter>
+    </ClInclude>
+    <ClInclude Include="ShapeDrawer.h">
+      <Filter>graphics</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

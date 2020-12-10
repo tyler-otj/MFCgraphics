@@ -1,15 +1,16 @@
 #include "Window.h"
+#include "color.h"
+#include "ShapeDrawer.h"
 #include <stdexcept>
 #include <algorithm>
 #include <string>
-#include <sstream>
-#include <iomanip>
 
 namespace {
 	static const std::string title("Cool Gfx Bro");
 }
 
 Window::Window() {}
+
 Window::~Window() {}
 
 LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam) {
@@ -42,7 +43,6 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam) {
 }
 
 bool Window::init() {
-	//Setting up WNDCLASSEX object
 	WNDCLASSEX wc;
 	wc.cbClsExtra = NULL;
 	wc.cbSize = sizeof(WNDCLASSEX);
@@ -88,13 +88,11 @@ bool Window::init() {
 	m_is_run = true;
 
 
-
-
 	//
 	m_elapsedTime = 0.0f;
 	//meshCube = canonicalShapes::getCanonicalCube();
 
-	if (!meshCube.load_object_file("C:\\Users\\tyler\\Desktop\\objFiles\\1dship.obj")) {
+	if (!meshCube.load_object_file("C:\\Users\\tyler\\Desktop\\objFiles\\in progress\\joined ship.obj")) {
 		throw std::runtime_error("Unable to load object file");
 	}
 
@@ -109,13 +107,6 @@ bool Window::init() {
 
 	lightDirection = { 0.0f, 0.0f, -1.0f };
 	lightDirection.normalize();
-
-	tp1 = std::chrono::system_clock::now();
-	tp2 = std::chrono::system_clock::now();
-	//
-
-
-
 
 	return true;
 }
@@ -146,87 +137,9 @@ bool Window::isRun() const{
 
 void Window::onCreate() {}
 
-namespace {
-	//bgr
-	static const COLORREF blue = RGB(255, 0, 0);
-	static const COLORREF green = RGB(0, 255, 0);
-	static const COLORREF red = RGB(0, 0, 255);
-	static const COLORREF colors[3] = { blue, green, red };
-}
-
-namespace {
-	void draw(int x, int y, COLORREF* buff, int const width, int const height) {
-		if (x >= 0 && x < width && y >= 0 && y < height) {
-			buff[y * width + x] = blue;
-		}
-	}
-
-	void drawLine(int x1, int y1, int x2, int y2, COLORREF* buff, int const width, int const height) {
-		int x, y, dx, dy, dx1, dy1, px, py, xe, ye, i;
-		dx = x2 - x1; dy = y2 - y1;
-		dx1 = abs(dx); dy1 = abs(dy);
-		px = 2 * dy1 - dx1;	py = 2 * dx1 - dy1;
-		if (dy1 <= dx1) {
-			if (dx >= 0) {
-				x = x1; y = y1; xe = x2;
-			} else {
-				x = x2; y = y2; xe = x1;
-			}
-
-			draw(x, y, buff, width, height);
-
-			for (i = 0; x < xe; ++i) {
-				x = x + 1;
-				if (px < 0)
-					px = px + 2 * dy1;
-				else {
-					if ((dx < 0 && dy < 0) || (dx > 0 && dy > 0)) y = y + 1; else y = y - 1;
-					px = px + 2 * (dy1 - dx1);
-				}
-				draw(x, y, buff, width, height);
-			}
-		} else {
-			if (dy >= 0) {
-				x = x1; y = y1; ye = y2;
-			} else {
-				x = x2; y = y2; ye = y1;
-			}
-
-			draw(x, y, buff, width, height);
-
-			for (i = 0; y < ye; ++i) {
-				y = y + 1;
-				if (py <= 0)
-					py = py + 2 * dx1;
-				else {
-					if ((dx < 0 && dy < 0) || (dx > 0 && dy > 0)) x = x + 1; else x = x - 1;
-					py = py + 2 * (dx1 - dy1);
-				}
-				draw(x, y, buff, width, height);
-			}
-		}
-	}
-
-	void drawTriangle(triangle const& t, COLORREF* buff, int const width, int const height) {
-		drawLine((int)t.vec[0].x, (int)t.vec[0].y, (int)t.vec[1].x, (int)t.vec[1].y, buff, width, height);
-		drawLine((int)t.vec[1].x, (int)t.vec[1].y, (int)t.vec[2].x, (int)t.vec[2].y, buff, width, height);
-		drawLine((int)t.vec[2].x, (int)t.vec[2].y, (int)t.vec[0].x, (int)t.vec[0].y, buff, width, height);
-	}
-}
-
-void Window::set_title_with_fps() {
-	tp2 = std::chrono::system_clock::now();
-	std::chrono::duration<float> elapsedTime = tp2 - tp1;
-	tp1 = tp2;
-	float const fElapsedTime = elapsedTime.count();
-	float const fps = 1.0f / fElapsedTime;
-
-	if (fps < 3.0f) {
-		throw std::runtime_error("FPS too low! Exiting..");
-	}
-
+void Window::update_title_fps() {
 	std::ostringstream ss;
-	ss << title << ' ' << std::setprecision(4) << fps;
+	ss << title << ' ' << fpsCalculator.get_fps();
 
 	if (!SetWindowTextA(m_hwnd, ss.str().c_str())) {
 		throw std::runtime_error("Unable to set window title.");
@@ -234,7 +147,7 @@ void Window::set_title_with_fps() {
 }
 
 void Window::onUpdate() {
-	set_title_with_fps();
+	update_title_fps();
 
 	HDC const hdc = GetDC(m_hwnd);
 	if (hdc == NULL) {
@@ -243,8 +156,6 @@ void Window::onUpdate() {
 
 	//TODO: this should be able to be created on the stack?
 	COLORREF* buff = reinterpret_cast<COLORREF*>(calloc(m_width * m_height, sizeof(COLORREF)));
-
-
 	//
 	++m_elapsedTime;
 	float fTheta = 0.03f * m_elapsedTime;
@@ -254,15 +165,16 @@ void Window::onUpdate() {
 	for (int i = meshCube.tris.size() - 1; i >= 0; --i) {
 		/*triangle working = meshCube.tris.at(i).getTriMultByMatrix(rotX);*/
 		triangle working = meshCube.tris.at(i).getTriMultByMatrix(mat4x4::rotateY(fTheta));
-		//triangle working = meshCube.tris.at(i).getTriMultByMatrix(mat4x4::rotateY(0.5));
-		working.multByMatrix(mat4x4::rotateX(0.5));
+		//triangle working = meshCube.tris.at(i).getTriMultByMatrix(mat4x4::rotateY(-0.7));
+		//working.multByMatrix(mat4x4::rotateX(0.7));
 
-		working.translateZ(36.0f);
+		working.translateZ(63.0f);
 
 		vec3d normal = working.getNormal();
 
 		//if camera ray is aligned with normal, it is visible (only draw visible faces)
-		if (normal.dotProduct(working.vec[0] - camera) < 0.0f) {
+		/*if (normal.dotProduct(working.vec[0] - camera) < 0.0f) {*/
+		if (true) {
 			float const dotProduct = normal.dotProduct(lightDirection);
 			//working.color = color::getColor(dotProduct).Attributes;
 
@@ -280,10 +192,9 @@ void Window::onUpdate() {
 	});
 
 	for (triangle t : triToRaster) {
-		drawTriangle(t, buff, m_width, m_height);
+		ShapeDrawer::drawTriangle(t, buff, m_width, m_height);
 	}
 	//
-
 
 	HBITMAP map = CreateBitmap(m_width, m_height,
 		1, // Color Planes, unfortanutelly don't know what is it actually. Let it be 1
