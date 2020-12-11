@@ -117,6 +117,7 @@
   <ItemGroup>
     <ClCompile Include="fps_calculator.cpp" />
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="Scene.cpp" />
     <ClCompile Include="ShapeDrawer.cpp" />
     <ClCompile Include="structures\shapeComponents\mat4x4.cpp" />
     <ClCompile Include="structures\shapeComponents\vec3d.cpp" />
@@ -125,6 +126,7 @@
   <ItemGroup>
     <ClInclude Include="color.h" />
     <ClInclude Include="fps_calculator.h" />
+    <ClInclude Include="Scene.h" />
     <ClInclude Include="ShapeDrawer.h" />
     <ClInclude Include="structures\shapeComponents\mat4x4.h" />
     <ClInclude Include="structures\shapeComponents\vec3d.h" />

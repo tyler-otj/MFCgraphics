@@ -41,6 +41,9 @@
     <ClCompile Include="ShapeDrawer.cpp">
       <Filter>graphics</Filter>
     </ClCompile>
+    <ClCompile Include="Scene.cpp">
+      <Filter>graphics</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Window.h">
@@ -68,6 +71,9 @@
       <Filter>Util</Filter>
     </ClInclude>
     <ClInclude Include="ShapeDrawer.h">
+      <Filter>graphics</Filter>
+    </ClInclude>
+    <ClInclude Include="Scene.h">
       <Filter>graphics</Filter>
     </ClInclude>
   </ItemGroup>

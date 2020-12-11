@@ -10,7 +10,6 @@ namespace {
 }
 
 Window::Window() {}
-
 Window::~Window() {}
 
 LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam) {
@@ -85,7 +84,7 @@ bool Window::init() {
 	::ShowWindow(m_hwnd, SW_SHOW);
 	::UpdateWindow(m_hwnd);
 
-	m_is_run = true;
+	//m_is_run = true;
 
 
 	//
@@ -103,10 +102,12 @@ bool Window::init() {
 	float const fAspectRatio = (float)m_height / (float)m_width;
 	float const fFovRad = 1.0f / tanf(fFov * 0.5f / 180.0f * 3.14159f);
 
-	matProj = mat4x4::projection(fAspectRatio, fFovRad, fFar, fNear);
+	mat4x4 matProj = mat4x4::projection(fAspectRatio, fFovRad, fFar, fNear);
 
-	lightDirection = { 0.0f, 0.0f, -1.0f };
+	vec3d lightDirection = { 0.0f, 0.0f, -1.0f };
 	lightDirection.normalize();
+
+	scene = Scene(matProj, lightDirection, vec3d());
 
 	return true;
 }
@@ -175,10 +176,10 @@ void Window::onUpdate() {
 		//if camera ray is aligned with normal, it is visible (only draw visible faces)
 		/*if (normal.dotProduct(working.vec[0] - camera) < 0.0f) {*/
 		if (true) {
-			float const dotProduct = normal.dotProduct(lightDirection);
+			float const dotProduct = normal.dotProduct(scene.lightDirection);
 			//working.color = color::getColor(dotProduct).Attributes;
 
-			working.multByMatrix(matProj);
+			working.multByMatrix(scene.matProj);
 			working.scaleIntoView((float)m_width, (float)m_height);
 			triToRaster.push_back(working);
 		}

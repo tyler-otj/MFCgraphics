@@ -2,16 +2,14 @@
 #include "structures/shapes/shapes.h"
 #include "structures/shapes/canonicalShapes.h"
 #include "fps_calculator.h"
+#include "Scene.h"
 
 #include <Windows.h>
 
 class Window{
 private:
 	mesh meshCube;
-	mat4x4 matProj;
-	float fTheta;
-	vec3d camera;
-	vec3d lightDirection;
+	Scene scene;
 	float m_elapsedTime;
 	fps_calculator fpsCalculator;
 
