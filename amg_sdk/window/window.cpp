@@ -128,7 +128,7 @@ void window::update_title_fps() {
 }
 
 void window::draw() {
-	HBITMAP map = CreateBitmap(m_width, m_height,
+	HBITMAP const map = CreateBitmap(m_width, m_height,
 		1, // Color Planes, unfortanutelly don't know what is it actually. Let it be 1
 		8 * 4, // Size of memory for one pixel in bits (in win32 4 bytes = 4*8 bits)
 		buff.get());

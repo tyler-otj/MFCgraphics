@@ -4,6 +4,7 @@
 #include "../structures/shapes/shapes.h"
 
 #include <vector>
+#include <string>
 
 class scene {
 private:
@@ -18,4 +19,6 @@ public:
 	scene(mat4x4 const& projection, vec3d const& cameraVec, vec3d const& lightDir);
 
 	void add_mesh(mesh const& toAdd);
+	void add_mesh(std::string const& pathToObjFile);
+	std::vector<mesh> const& get_meshes();
 };

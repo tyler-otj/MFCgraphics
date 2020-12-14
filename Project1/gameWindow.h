@@ -6,10 +6,9 @@
 class gameWindow : public window {
 private:
 	typedef window parent;
-
-	mesh meshCube;
 	scene m_scene;
 
+	//MUST call parent::draw as last line
 	virtual void draw() override;
 
 public:

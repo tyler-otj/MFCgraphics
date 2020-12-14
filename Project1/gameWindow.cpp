@@ -4,10 +4,6 @@
 #include <algorithm>
 
 gameWindow::gameWindow() {
-	if (!meshCube.load_object_file("C:\\Users\\tyler\\Desktop\\objFiles\\in progress\\joined ship.obj")) {
-		throw std::runtime_error("Unable to load object file");
-	}
-
 	//Projection Matrix
 	float const fNear = 0.1f;
 	float const fFar = 1000.0f;
@@ -21,27 +17,30 @@ gameWindow::gameWindow() {
 	lightDirection.normalize();
 
 	m_scene = scene(matProj, lightDirection, vec3d());
+	m_scene.add_mesh("C:\\Users\\tyler\\Desktop\\objFiles\\in progress\\joined ship.obj");
 }
 
 void gameWindow::draw() {
 	float fTheta = 0.03f * m_elapsedTime;
 	std::vector<triangle> triToRaster;
 
-	for (int i = meshCube.tris.size() - 1; i >= 0; --i) {
-		triangle working = meshCube.tris.at(i).getTriMultByMatrix(mat4x4::rotateY(fTheta));
+	for (mesh const& m : m_scene.get_meshes()) {
+		for (int i = m.tris.size() - 1; i >= 0; --i) {
+			triangle working = m.tris.at(i).getTriMultByMatrix(mat4x4::rotateY(fTheta));
 
-		working.translateZ(63.0f);
+			working.translateZ(63.0f);
 
-		vec3d normal = working.getNormal();
+			vec3d normal = working.getNormal();
 
-		//if camera ray is aligned with normal, it is visible (only draw visible faces)
-		//if (normal.dotProduct(working.vec[0] - camera) < 0.0f) {
-		if (true) {
-			float const dotProduct = normal.dotProduct(m_scene.lightDirection);
+			//if camera ray is aligned with normal, it is visible (only draw visible faces)
+			//if (normal.dotProduct(working.vec[0] - camera) < 0.0f) {
+			if (true) {
+				float const dotProduct = normal.dotProduct(m_scene.lightDirection);
 
-			working.multByMatrix(m_scene.matProj);
-			working.scaleIntoView((float)m_width, (float)m_height);
-			triToRaster.push_back(working);
+				working.multByMatrix(m_scene.matProj);
+				working.scaleIntoView((float)m_width, (float)m_height);
+				triToRaster.push_back(working);
+			}
 		}
 	}
 
@@ -52,7 +51,7 @@ void gameWindow::draw() {
 		return z1 > z2;
 	});
 
-	for (triangle t : triToRaster) {
+	for (triangle const& t : triToRaster) {
 		ShapeDrawer::drawTriangle(t, buff.get(), m_width, m_height);
 	}
 
