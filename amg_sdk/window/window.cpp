@@ -9,9 +9,6 @@ namespace {
 	static const std::string title("Cool Gfx Bro");
 }
 
-window::window() {}
-window::~window() {}
-
 namespace {
 	LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam) {
 		switch (msg) {
@@ -43,7 +40,7 @@ namespace {
 	}
 }
 
-bool window::init() {
+window::window() {
 	buff = std::make_unique<COLORREF[]>(m_width * m_height);
 
 	WNDCLASSEX wc;
@@ -61,7 +58,7 @@ bool window::init() {
 	wc.lpfnWndProc = &WndProc;
 
 	if (!::RegisterClassEx(&wc)) {
-		return false;
+		throw std::runtime_error("TODO");
 	}
 
 	//Creation of the window
@@ -82,7 +79,7 @@ bool window::init() {
 	);
 
 	if (!m_hwnd) {
-		return false;
+		throw std::runtime_error("TODO");
 	}
 
 	//show up the window
@@ -96,36 +93,17 @@ bool window::init() {
 	::UpdateWindow(m_hwnd);
 
 	m_is_run = true;
-
-
-	//
 	m_elapsedTime = 0.0f;
-
-	if (!meshCube.load_object_file("C:\\Users\\tyler\\Desktop\\objFiles\\in progress\\joined ship.obj")) {
-		throw std::runtime_error("Unable to load object file");
-	}
-
-	//Projection Matrix
-	float const fNear = 0.1f;
-	float const fFar = 1000.0f;
-	float const fFov = 90.0f;
-	float const fAspectRatio = (float)m_height / (float)m_width;
-	float const fFovRad = 1.0f / tanf(fFov * 0.5f / 180.0f * 3.14159f);
-
-	mat4x4 matProj = mat4x4::projection(fAspectRatio, fFovRad, fFar, fNear);
-
-	vec3d lightDirection = { 0.0f, 0.0f, -1.0f };
-	lightDirection.normalize();
-
-	m_scene = scene(matProj, lightDirection, vec3d());
-
-	return true;
 }
+
+window::~window() {}
 
 bool window::broadcast() {
 	MSG msg;
 
-	this->onUpdate();
+	prepareToDraw();
+	onUpdate();
+	draw();
 
 	while (::PeekMessage(&msg, NULL, 0, 0, PM_REMOVE) > 0) {
 		TranslateMessage(&msg);
@@ -176,44 +154,8 @@ void window::draw() {
 }
 
 void window::onUpdate() {
-	prepareToDraw();
 	update_title_fps();
-
 	++m_elapsedTime;
-	float fTheta = 0.03f * m_elapsedTime;
-
-	std::vector<triangle> triToRaster;
-
-	for (int i = meshCube.tris.size() - 1; i >= 0; --i) {
-		triangle working = meshCube.tris.at(i).getTriMultByMatrix(mat4x4::rotateY(fTheta));
-
-		working.translateZ(63.0f);
-
-		vec3d normal = working.getNormal();
-
-		//if camera ray is aligned with normal, it is visible (only draw visible faces)
-		//if (normal.dotProduct(working.vec[0] - camera) < 0.0f) {
-		if (true) {
-			float const dotProduct = normal.dotProduct(m_scene.lightDirection);
-
-			working.multByMatrix(m_scene.matProj);
-			working.scaleIntoView((float)m_width, (float)m_height);
-			triToRaster.push_back(working);
-		}
-	}
-
-	//sort on avg z
-	sort(triToRaster.begin(), triToRaster.end(), [](triangle const& t1, triangle const& t2) {
-		float const z1 = (t1.vec[0].z + t1.vec[1].z + t1.vec[2].z) / 3.0f;
-		float const z2 = (t2.vec[0].z + t2.vec[1].z + t2.vec[2].z) / 3.0f;
-		return z1 > z2;
-	});
-
-	for (triangle t : triToRaster) {
-		ShapeDrawer::drawTriangle(t, buff.get(), m_width, m_height);
-	}
-	
-	draw();
 }
 
 void window::onDestroy() {

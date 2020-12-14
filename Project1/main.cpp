@@ -1,13 +1,13 @@
 #include "../amg_sdk/window/window.h"
 #include <iostream>
 
-int main() {
-	window app;
+#include "gameWindow.h"
 
-	if (app.init()) {
-		while (app.isRun()) {
-			app.broadcast();
-		}
+int main() {
+	gameWindow app;
+
+	while (app.isRun()) {
+		app.broadcast();
 	}
 
 	return 0;

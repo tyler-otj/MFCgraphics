@@ -9,20 +9,18 @@
 
 class window{
 private:
-	constexpr static int const m_width = 1024;
-	constexpr static int const m_height = 768;
-
 	HDC hdc;
-	std::unique_ptr<COLORREF[]> buff;
-	mesh meshCube;
-	scene m_scene;
-
-	float m_elapsedTime;
+	//mesh meshCube;
+	//scene m_scene;
 	fps_calculator fpsCalculator;
 
 	void update_title_fps();
 
 protected:
+	std::unique_ptr<COLORREF[]> buff;
+	float m_elapsedTime;
+	constexpr static int const m_width = 1024;
+	constexpr static int const m_height = 768;
 	HWND m_hwnd;
 	bool m_is_run;
 
@@ -33,7 +31,6 @@ protected:
 public:
 	window();
 
-	bool init();
 	bool broadcast();
 	bool release();
 	bool isRun() const;
