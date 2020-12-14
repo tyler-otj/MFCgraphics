@@ -1,5 +1,5 @@
 #include "ShapeDrawer.h"
-#include "color.h"
+#include "../util/color.h"
 
 namespace {
 	void draw(int x, int y, COLORREF* buff, int const width, int const height) {

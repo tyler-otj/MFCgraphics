@@ -1,6 +1,6 @@
 #pragma once
-#include "structures/shapeComponents/mat4x4.h"
-#include "structures/shapeComponents/vec3d.h"
+#include "../structures/shapeComponents/mat4x4.h"
+#include "../structures/shapeComponents/vec3d.h"
 
 class Scene {
 private:

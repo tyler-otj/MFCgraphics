@@ -1,8 +1,8 @@
-#include "Window.h"
+#include "../amg_sdk/window/window.h"
 #include <iostream>
 
 int main() {
-	Window app;
+	window app;
 
 	if (app.init()) {
 		while (app.isRun()) {

@@ -1,12 +1,12 @@
 #pragma once
-#include "structures/shapes/shapes.h"
-#include "structures/shapes/canonicalShapes.h"
-#include "fps_calculator.h"
-#include "Scene.h"
+#include "../structures/shapes/shapes.h"
+#include "../structures/shapes/canonicalShapes.h"
+#include "../util/fps_calculator.h"
+#include "../graphics/scene.h"
 
 #include <Windows.h>
 
-class Window{
+class window{
 private:
 	mesh meshCube;
 	Scene scene;
@@ -23,7 +23,7 @@ protected:
 	constexpr static int const m_height = 768;
 
 public:
-	Window();
+	window();
 
 	bool init();
 	bool broadcast();
@@ -35,5 +35,5 @@ public:
 	virtual void onUpdate();
 	virtual void onDestroy();
 
-	~Window();
+	~window();
 };

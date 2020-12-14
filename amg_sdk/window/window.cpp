@@ -1,6 +1,6 @@
-#include "Window.h"
-#include "color.h"
-#include "ShapeDrawer.h"
+#include "window.h"
+#include "../util/color.h"
+#include "../graphics/shapeDrawer.h"
 #include <stdexcept>
 #include <algorithm>
 #include <string>
@@ -9,8 +9,8 @@ namespace {
 	static const std::string title("Cool Gfx Bro");
 }
 
-Window::Window() {}
-Window::~Window() {}
+window::window() {}
+window::~window() {}
 
 LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam) {
 	switch (msg) {
@@ -18,18 +18,18 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam) {
 			{
 				// Event fired when the window is created
 				// collected here..
-				Window* window = (Window*)((LPCREATESTRUCT)lparam)->lpCreateParams;
+				window* w = (window*)((LPCREATESTRUCT)lparam)->lpCreateParams;
 				// .. and then stored for later lookup
-				SetWindowLongPtr(hwnd, GWL_USERDATA, (LONG_PTR)window);
-				window->onCreate();
+				SetWindowLongPtr(hwnd, GWL_USERDATA, (LONG_PTR)w);
+				w->onCreate();
 				break;
 			}
 
 		case WM_DESTROY:
 			{
 				// Event fired when the window is destroyed
-				Window* window = (Window*)GetWindowLong(hwnd, GWL_USERDATA);
-				window->onDestroy();
+				window* w = (window*)GetWindowLong(hwnd, GWL_USERDATA);
+				w->onDestroy();
 				::PostQuitMessage(0);
 				break;
 			}
@@ -41,7 +41,7 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam) {
 	return NULL;
 }
 
-bool Window::init() {
+bool window::init() {
 	WNDCLASSEX wc;
 	wc.cbClsExtra = NULL;
 	wc.cbSize = sizeof(WNDCLASSEX);
@@ -84,12 +84,11 @@ bool Window::init() {
 	::ShowWindow(m_hwnd, SW_SHOW);
 	::UpdateWindow(m_hwnd);
 
-	//m_is_run = true;
+	m_is_run = true;
 
 
 	//
 	m_elapsedTime = 0.0f;
-	//meshCube = canonicalShapes::getCanonicalCube();
 
 	if (!meshCube.load_object_file("C:\\Users\\tyler\\Desktop\\objFiles\\in progress\\joined ship.obj")) {
 		throw std::runtime_error("Unable to load object file");
@@ -112,7 +111,7 @@ bool Window::init() {
 	return true;
 }
 
-bool Window::broadcast() {
+bool window::broadcast() {
 	MSG msg;
 
 	this->onUpdate();
@@ -125,20 +124,20 @@ bool Window::broadcast() {
 	return true;
 }
 
-bool Window::release() {
+bool window::release() {
 	if (!::DestroyWindow(m_hwnd))
 		return false;
 
 	return true;
 }
 
-bool Window::isRun() const{
+bool window::isRun() const{
 	return m_is_run;
 }
 
-void Window::onCreate() {}
+void window::onCreate() {}
 
-void Window::update_title_fps() {
+void window::update_title_fps() {
 	std::ostringstream ss;
 	ss << title << ' ' << fpsCalculator.get_fps();
 
@@ -147,7 +146,7 @@ void Window::update_title_fps() {
 	}
 }
 
-void Window::onUpdate() {
+void window::onUpdate() {
 	update_title_fps();
 
 	HDC const hdc = GetDC(m_hwnd);
@@ -164,10 +163,7 @@ void Window::onUpdate() {
 	std::vector<triangle> triToRaster;
 
 	for (int i = meshCube.tris.size() - 1; i >= 0; --i) {
-		/*triangle working = meshCube.tris.at(i).getTriMultByMatrix(rotX);*/
 		triangle working = meshCube.tris.at(i).getTriMultByMatrix(mat4x4::rotateY(fTheta));
-		//triangle working = meshCube.tris.at(i).getTriMultByMatrix(mat4x4::rotateY(-0.7));
-		//working.multByMatrix(mat4x4::rotateX(0.7));
 
 		working.translateZ(63.0f);
 
@@ -177,7 +173,6 @@ void Window::onUpdate() {
 		/*if (normal.dotProduct(working.vec[0] - camera) < 0.0f) {*/
 		if (true) {
 			float const dotProduct = normal.dotProduct(scene.lightDirection);
-			//working.color = color::getColor(dotProduct).Attributes;
 
 			working.multByMatrix(scene.matProj);
 			working.scaleIntoView((float)m_width, (float)m_height);
@@ -211,6 +206,6 @@ void Window::onUpdate() {
 	free(buff);
 }
 
-void Window::onDestroy() {
+void window::onDestroy() {
 	m_is_run = false;
 }

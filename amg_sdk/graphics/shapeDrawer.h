@@ -1,6 +1,6 @@
 #pragma once
 #include <windows.h>
-#include "structures/shapes/shapes.h"
+#include "../structures/shapes/shapes.h"
 
 class ShapeDrawer{
 public:

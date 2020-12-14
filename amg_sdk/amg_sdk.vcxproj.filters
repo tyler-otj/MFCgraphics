@@ -1,0 +1,75 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="structures">
+      <UniqueIdentifier>{2f40b778-d90a-435f-a8e4-1ca549700b74}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="structures\shapeComponents">
+      <UniqueIdentifier>{3ad87b83-f87b-42b7-a860-d2a7bb622792}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="structures\shapes">
+      <UniqueIdentifier>{b64ad274-1eb3-4d57-88cc-fd9e2657b1b2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="graphics">
+      <UniqueIdentifier>{e5161c0a-0c0d-41a7-b7f8-27d8fe01540c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="window">
+      <UniqueIdentifier>{346408d1-8e48-4130-a41b-b01648ad4a7e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="util">
+      <UniqueIdentifier>{85d7c0d8-fb04-4fcb-9b6e-b7f6bd637738}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="structures\shapeComponents\mat4x4.cpp">
+      <Filter>structures\shapeComponents</Filter>
+    </ClCompile>
+    <ClCompile Include="structures\shapeComponents\vec3d.cpp">
+      <Filter>structures\shapeComponents</Filter>
+    </ClCompile>
+    <ClCompile Include="graphics\scene.cpp">
+      <Filter>graphics</Filter>
+    </ClCompile>
+    <ClCompile Include="graphics\shapeDrawer.cpp">
+      <Filter>graphics</Filter>
+    </ClCompile>
+    <ClCompile Include="window\window.cpp">
+      <Filter>window</Filter>
+    </ClCompile>
+    <ClCompile Include="util\fps_calculator.cpp">
+      <Filter>util</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="structures\shapeComponents\mat4x4.h">
+      <Filter>structures\shapeComponents</Filter>
+    </ClInclude>
+    <ClInclude Include="structures\shapeComponents\vec3d.h">
+      <Filter>structures\shapeComponents</Filter>
+    </ClInclude>
+    <ClInclude Include="structures\shapes\canonicalShapes.h">
+      <Filter>structures\shapes</Filter>
+    </ClInclude>
+    <ClInclude Include="structures\shapes\shapeBase.h">
+      <Filter>structures\shapes</Filter>
+    </ClInclude>
+    <ClInclude Include="structures\shapes\shapes.h">
+      <Filter>structures\shapes</Filter>
+    </ClInclude>
+    <ClInclude Include="graphics\scene.h">
+      <Filter>graphics</Filter>
+    </ClInclude>
+    <ClInclude Include="graphics\shapeDrawer.h">
+      <Filter>graphics</Filter>
+    </ClInclude>
+    <ClInclude Include="window\window.h">
+      <Filter>window</Filter>
+    </ClInclude>
+    <ClInclude Include="util\color.h">
+      <Filter>util</Filter>
+    </ClInclude>
+    <ClInclude Include="util\fps_calculator.h">
+      <Filter>util</Filter>
+    </ClInclude>
+  </ItemGroup>
+</Project>
