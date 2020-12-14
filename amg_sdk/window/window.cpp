@@ -1,15 +1,12 @@
 #include "window.h"
-#include "../util/color.h"
-#include "../graphics/shapeDrawer.h"
+
+#include <sstream>
 #include <stdexcept>
-#include <algorithm>
 #include <string>
 
 namespace {
 	static const std::string title("Cool Gfx Bro");
-}
 
-namespace {
 	LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam) {
 		switch (msg) {
 		case WM_CREATE:
@@ -19,7 +16,6 @@ namespace {
 			window* w = (window*)((LPCREATESTRUCT)lparam)->lpCreateParams;
 			// .. and then stored for later lookup
 			SetWindowLongPtr(hwnd, GWL_USERDATA, (LONG_PTR)w);
-			w->onCreate();
 			break;
 		}
 
@@ -82,7 +78,6 @@ window::window() {
 		throw std::runtime_error("TODO");
 	}
 
-	//show up the window
 	::ShowWindow(m_hwnd, SW_SHOW);
 
 	hdc = GetDC(m_hwnd);
@@ -96,12 +91,10 @@ window::window() {
 	m_elapsedTime = 0.0f;
 }
 
-window::~window() {}
-
 bool window::broadcast() {
 	MSG msg;
 
-	prepareToDraw();
+	buff = std::make_unique<COLORREF[]>(m_width * m_height);
 	onUpdate();
 	draw();
 
@@ -113,6 +106,7 @@ bool window::broadcast() {
 	return true;
 }
 
+//TODO: go back in revisions and see where this was called, remove if not needed
 bool window::release() {
 	if (!::DestroyWindow(m_hwnd))
 		return false;
@@ -124,8 +118,6 @@ bool window::isRun() const{
 	return m_is_run;
 }
 
-void window::onCreate() {}
-
 void window::update_title_fps() {
 	std::ostringstream ss;
 	ss << title << ' ' << fpsCalculator.get_fps();
@@ -133,10 +125,6 @@ void window::update_title_fps() {
 	if (!SetWindowTextA(m_hwnd, ss.str().c_str())) {
 		throw std::runtime_error("Unable to set window title.");
 	}
-}
-
-void window::prepareToDraw() {
-	buff = std::make_unique<COLORREF[]>(m_width * m_height);
 }
 
 void window::draw() {
@@ -150,7 +138,7 @@ void window::draw() {
 	BitBlt(hdc, 0, 0, m_width, m_height, src, 0, 0, SRCCOPY);
 
 	DeleteObject(map);
-	DeleteDC(src); // Deleting temp HDC
+	DeleteDC(src);
 }
 
 void window::onUpdate() {

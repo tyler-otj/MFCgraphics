@@ -23,10 +23,6 @@ gameWindow::gameWindow() {
 	m_scene = scene(matProj, lightDirection, vec3d());
 }
 
-void gameWindow::prepareToDraw() {
-	parent::prepareToDraw();
-}
-
 void gameWindow::draw() {
 	float fTheta = 0.03f * m_elapsedTime;
 	std::vector<triangle> triToRaster;
@@ -61,9 +57,5 @@ void gameWindow::draw() {
 	}
 
 	parent::draw();
-}
-
-void gameWindow::onUpdate() {
-	parent::onUpdate();
 }
 

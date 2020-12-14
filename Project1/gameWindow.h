@@ -1,5 +1,7 @@
 #pragma once
 #include "../amg_sdk/window/window.h"
+#include "../amg_sdk/structures/shapes/shapes.h"
+#include "../amg_sdk/graphics/scene.h"
 
 class gameWindow : public window {
 private:
@@ -8,9 +10,7 @@ private:
 	mesh meshCube;
 	scene m_scene;
 
-	virtual void prepareToDraw() override;
 	virtual void draw() override;
-	virtual void onUpdate() override;
 
 public:
 	gameWindow();
