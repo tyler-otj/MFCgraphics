@@ -87,6 +87,12 @@ bool window::init() {
 
 	//show up the window
 	::ShowWindow(m_hwnd, SW_SHOW);
+
+	hdc = GetDC(m_hwnd);
+	if (hdc == NULL) {
+		throw std::runtime_error("Could not recieve device context");
+	}
+
 	::UpdateWindow(m_hwnd);
 
 	m_is_run = true;
@@ -151,19 +157,28 @@ void window::update_title_fps() {
 	}
 }
 
-void window::onUpdate() {
+void window::prepareToDraw() {
 	buff = std::make_unique<COLORREF[]>(m_width * m_height);
+}
+
+void window::draw() {
+	HBITMAP map = CreateBitmap(m_width, m_height,
+		1, // Color Planes, unfortanutelly don't know what is it actually. Let it be 1
+		8 * 4, // Size of memory for one pixel in bits (in win32 4 bytes = 4*8 bits)
+		buff.get());
+
+	HDC src = CreateCompatibleDC(hdc); 	// Temp HDC to copy picture
+	SelectObject(src, map); // Inserting picture into our temp HDC
+	BitBlt(hdc, 0, 0, m_width, m_height, src, 0, 0, SRCCOPY);
+
+	DeleteObject(map);
+	DeleteDC(src); // Deleting temp HDC
+}
+
+void window::onUpdate() {
+	prepareToDraw();
 	update_title_fps();
 
-	HDC const hdc = GetDC(m_hwnd);
-	if (hdc == NULL) {
-		throw std::runtime_error("Could not recieve device context");
-	}
-
-	//TODO: this should be able to be created on the stack?
-	//COLORREF* buff = reinterpret_cast<COLORREF*>(calloc(m_width * m_height, sizeof(COLORREF)));
-	//std::fill( buff.begin(), buff.end() );
-	//
 	++m_elapsedTime;
 	float fTheta = 0.03f * m_elapsedTime;
 
@@ -177,7 +192,7 @@ void window::onUpdate() {
 		vec3d normal = working.getNormal();
 
 		//if camera ray is aligned with normal, it is visible (only draw visible faces)
-		/*if (normal.dotProduct(working.vec[0] - camera) < 0.0f) {*/
+		//if (normal.dotProduct(working.vec[0] - camera) < 0.0f) {
 		if (true) {
 			float const dotProduct = normal.dotProduct(m_scene.lightDirection);
 
@@ -198,18 +213,7 @@ void window::onUpdate() {
 		ShapeDrawer::drawTriangle(t, buff.get(), m_width, m_height);
 	}
 	
-
-	HBITMAP map = CreateBitmap(m_width, m_height,
-		1, // Color Planes, unfortanutelly don't know what is it actually. Let it be 1
-		8 * 4, // Size of memory for one pixel in bits (in win32 4 bytes = 4*8 bits)
-		buff.get());
-
-	HDC src = CreateCompatibleDC(hdc); 	// Temp HDC to copy picture
-	SelectObject(src, map); // Inserting picture into our temp HDC
-	BitBlt(hdc, 0, 0, m_width, m_height, src, 0, 0, SRCCOPY);
-
-	DeleteObject(map);
-	DeleteDC(src); // Deleting temp HDC
+	draw();
 }
 
 void window::onDestroy() {

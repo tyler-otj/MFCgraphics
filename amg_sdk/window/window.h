@@ -12,6 +12,7 @@ private:
 	constexpr static int const m_width = 1024;
 	constexpr static int const m_height = 768;
 
+	HDC hdc;
 	std::unique_ptr<COLORREF[]> buff;
 	mesh meshCube;
 	scene m_scene;
@@ -24,6 +25,10 @@ private:
 protected:
 	HWND m_hwnd;
 	bool m_is_run;
+
+	//TODO: find a better way to do this! child classes MUST call prepareToDraw as its first line, then draw as its last line in its update function!
+	virtual void prepareToDraw();
+	virtual void draw();
 
 public:
 	window();
