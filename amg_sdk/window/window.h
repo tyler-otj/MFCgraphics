@@ -5,11 +5,17 @@
 #include "../graphics/scene.h"
 
 #include <Windows.h>
+#include <memory>
 
 class window{
 private:
+	constexpr static int const m_width = 1024;
+	constexpr static int const m_height = 768;
+
+	std::unique_ptr<COLORREF[]> buff;
 	mesh meshCube;
-	Scene scene;
+	scene m_scene;
+
 	float m_elapsedTime;
 	fps_calculator fpsCalculator;
 
@@ -18,9 +24,6 @@ private:
 protected:
 	HWND m_hwnd;
 	bool m_is_run;
-
-	constexpr static int const m_width = 1024;
-	constexpr static int const m_height = 768;
 
 public:
 	window();

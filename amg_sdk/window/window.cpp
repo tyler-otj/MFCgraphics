@@ -12,36 +12,40 @@ namespace {
 window::window() {}
 window::~window() {}
 
-LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam) {
-	switch (msg) {
+namespace {
+	LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam) {
+		switch (msg) {
 		case WM_CREATE:
-			{
-				// Event fired when the window is created
-				// collected here..
-				window* w = (window*)((LPCREATESTRUCT)lparam)->lpCreateParams;
-				// .. and then stored for later lookup
-				SetWindowLongPtr(hwnd, GWL_USERDATA, (LONG_PTR)w);
-				w->onCreate();
-				break;
-			}
+		{
+			// Event fired when the window is created
+			// collected here..
+			window* w = (window*)((LPCREATESTRUCT)lparam)->lpCreateParams;
+			// .. and then stored for later lookup
+			SetWindowLongPtr(hwnd, GWL_USERDATA, (LONG_PTR)w);
+			w->onCreate();
+			break;
+		}
 
 		case WM_DESTROY:
-			{
-				// Event fired when the window is destroyed
-				window* w = (window*)GetWindowLong(hwnd, GWL_USERDATA);
-				w->onDestroy();
-				::PostQuitMessage(0);
-				break;
-			}
+		{
+			// Event fired when the window is destroyed
+			window* w = (window*)GetWindowLong(hwnd, GWL_USERDATA);
+			w->onDestroy();
+			::PostQuitMessage(0);
+			break;
+		}
 
 		default:
 			return ::DefWindowProc(hwnd, msg, wparam, lparam);
-	}
+		}
 
-	return NULL;
+		return NULL;
+	}
 }
 
 bool window::init() {
+	buff = std::make_unique<COLORREF[]>(m_width * m_height);
+
 	WNDCLASSEX wc;
 	wc.cbClsExtra = NULL;
 	wc.cbSize = sizeof(WNDCLASSEX);
@@ -77,8 +81,9 @@ bool window::init() {
 		this
 	);
 
-	if (!m_hwnd)
+	if (!m_hwnd) {
 		return false;
+	}
 
 	//show up the window
 	::ShowWindow(m_hwnd, SW_SHOW);
@@ -106,7 +111,7 @@ bool window::init() {
 	vec3d lightDirection = { 0.0f, 0.0f, -1.0f };
 	lightDirection.normalize();
 
-	scene = Scene(matProj, lightDirection, vec3d());
+	m_scene = scene(matProj, lightDirection, vec3d());
 
 	return true;
 }
@@ -147,6 +152,7 @@ void window::update_title_fps() {
 }
 
 void window::onUpdate() {
+	buff = std::make_unique<COLORREF[]>(m_width * m_height);
 	update_title_fps();
 
 	HDC const hdc = GetDC(m_hwnd);
@@ -155,7 +161,8 @@ void window::onUpdate() {
 	}
 
 	//TODO: this should be able to be created on the stack?
-	COLORREF* buff = reinterpret_cast<COLORREF*>(calloc(m_width * m_height, sizeof(COLORREF)));
+	//COLORREF* buff = reinterpret_cast<COLORREF*>(calloc(m_width * m_height, sizeof(COLORREF)));
+	//std::fill( buff.begin(), buff.end() );
 	//
 	++m_elapsedTime;
 	float fTheta = 0.03f * m_elapsedTime;
@@ -172,9 +179,9 @@ void window::onUpdate() {
 		//if camera ray is aligned with normal, it is visible (only draw visible faces)
 		/*if (normal.dotProduct(working.vec[0] - camera) < 0.0f) {*/
 		if (true) {
-			float const dotProduct = normal.dotProduct(scene.lightDirection);
+			float const dotProduct = normal.dotProduct(m_scene.lightDirection);
 
-			working.multByMatrix(scene.matProj);
+			working.multByMatrix(m_scene.matProj);
 			working.scaleIntoView((float)m_width, (float)m_height);
 			triToRaster.push_back(working);
 		}
@@ -188,14 +195,14 @@ void window::onUpdate() {
 	});
 
 	for (triangle t : triToRaster) {
-		ShapeDrawer::drawTriangle(t, buff, m_width, m_height);
+		ShapeDrawer::drawTriangle(t, buff.get(), m_width, m_height);
 	}
-	//
+	
 
 	HBITMAP map = CreateBitmap(m_width, m_height,
 		1, // Color Planes, unfortanutelly don't know what is it actually. Let it be 1
 		8 * 4, // Size of memory for one pixel in bits (in win32 4 bytes = 4*8 bits)
-		buff);
+		buff.get());
 
 	HDC src = CreateCompatibleDC(hdc); 	// Temp HDC to copy picture
 	SelectObject(src, map); // Inserting picture into our temp HDC
@@ -203,7 +210,6 @@ void window::onUpdate() {
 
 	DeleteObject(map);
 	DeleteDC(src); // Deleting temp HDC
-	free(buff);
 }
 
 void window::onDestroy() {
