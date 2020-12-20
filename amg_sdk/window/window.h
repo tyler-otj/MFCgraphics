@@ -18,7 +18,7 @@ protected:
 	HWND m_hwnd;
 	bool m_is_run;
 
-	//children MUST CALL THIS as last line
+	//children MUST CALL THIS as last line if overridden
 	virtual void draw();
 
 public:

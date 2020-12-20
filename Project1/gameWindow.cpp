@@ -17,18 +17,21 @@ gameWindow::gameWindow() {
 	lightDirection.normalize();
 
 	m_scene = scene(matProj, lightDirection, vec3d());
-	m_scene.add_mesh("C:\\Users\\tyler\\Desktop\\objFiles\\in progress\\joined ship.obj");
+	//m_scene.add_mesh("C:\\Users\\tyler\\Desktop\\objFiles\\in progress\\joined ship.obj");
+	m_scene.add_mesh("C:\\Users\\tyler\\Desktop\\objFiles\\axis.obj");
 }
 
 void gameWindow::draw() {
 	float fTheta = 0.03f * m_elapsedTime;
 	std::vector<triangle> triToRaster;
 
+
 	for (mesh const& m : m_scene.get_meshes()) {
 		for (int i = m.tris.size() - 1; i >= 0; --i) {
-			triangle working = m.tris.at(i).getTriMultByMatrix(mat4x4::rotateY(fTheta));
+			triangle working = m.tris.at(i).getTriMultByMatrix(mat4x4::rotateX(fTheta));
+			//triangle working = m.tris.at(i).getTriMultByMatrix(mat4x4::rotateY(0));
 
-			working.translateZ(63.0f);
+			working.translateZ(23.0f);
 
 			vec3d normal = working.getNormal();
 
@@ -36,10 +39,15 @@ void gameWindow::draw() {
 			//if (normal.dotProduct(working.vec[0] - camera) < 0.0f) {
 			if (true) {
 				float const dotProduct = normal.dotProduct(m_scene.lightDirection);
+				
+				triangle triViewed = working.getTriMultByMatrix(m_scene.view);
+				triangle triProjected = triViewed.getTriMultByMatrix(m_scene.matProj);
+				triProjected.scaleIntoView((float)m_width, (float)m_height);
+				triToRaster.push_back(triProjected);
 
-				working.multByMatrix(m_scene.matProj);
-				working.scaleIntoView((float)m_width, (float)m_height);
-				triToRaster.push_back(working);
+				//working.multByMatrix(m_scene.matProj);
+				//working.scaleIntoView((float)m_width, (float)m_height);
+				//triToRaster.push_back(working);
 			}
 		}
 	}
