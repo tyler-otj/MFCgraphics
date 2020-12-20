@@ -32,3 +32,5 @@ public:
 	virtual void onUpdate();
 	virtual void onDestroy();
 };
+
+void show_ok_dialog(std::string const& message);

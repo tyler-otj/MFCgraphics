@@ -11,8 +11,7 @@ namespace {
 		switch (msg) {
 		case WM_CREATE:
 		{
-			// Event fired when the window is created
-			// collected here..
+			// Event fired when the window is created collected here..
 			window* w = (window*)((LPCREATESTRUCT)lparam)->lpCreateParams;
 			// .. and then stored for later lookup
 			SetWindowLongPtr(hwnd, GWL_USERDATA, (LONG_PTR)w);
@@ -26,6 +25,13 @@ namespace {
 			w->onDestroy();
 			::PostQuitMessage(0);
 			break;
+		}
+
+		case WM_KEYDOWN:
+		{
+			if (wparam == VK_F1) {
+				show_ok_dialog("F1 Pressed");
+			}
 		}
 
 		default:
@@ -148,4 +154,8 @@ void window::onUpdate() {
 
 void window::onDestroy() {
 	m_is_run = false;
+}
+
+void show_ok_dialog(std::string const& message) {
+	MessageBox(NULL, message.c_str(), "title", MB_OKCANCEL);
 }

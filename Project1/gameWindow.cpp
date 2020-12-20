@@ -65,4 +65,3 @@ void gameWindow::draw() {
 
 	parent::draw();
 }
-
