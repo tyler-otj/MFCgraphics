@@ -10,6 +10,7 @@ private:
 
 	//MUST call parent::draw as last line
 	virtual void draw() override;
+	//virtual void onUpdate() override;
 
 public:
 	gameWindow();

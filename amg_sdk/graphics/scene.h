@@ -12,7 +12,7 @@ private:
 
 public:
 	mat4x4 matProj;
-	//mat4x4 camera;
+	vec3d camera;
 	mat4x4 view;
 	vec3d lightDirection;
 

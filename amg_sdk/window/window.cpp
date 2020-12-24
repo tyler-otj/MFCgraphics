@@ -4,45 +4,74 @@
 #include <stdexcept>
 #include <string>
 
+//#include <bitset>
+
 namespace {
 	static const std::string title("Cool Gfx Bro");
 
+	int get_key_pressed(LPARAM param) {
+		switch (param) {
+			case 87:
+				return pressed::UP;
+			case 65:
+				return pressed::LEFT;
+			case 83:
+				return pressed::DOWN;
+			case 68:
+				return pressed::RIGHT;
+		}
+
+		return 0;
+	}
+
+	int get_key_released(LPARAM param) {
+		switch (param) {
+		case 87:
+			return released::UP;
+		case 65:
+			return released::LEFT;
+		case 83:
+			return released::DOWN;
+		case 68:
+			return released::RIGHT;
+		}
+
+		return 0;
+	}
+
 	LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam) {
 		switch (msg) {
-		case WM_CREATE:
-		{
-			// Event fired when the window is created collected here..
-			window* w = (window*)((LPCREATESTRUCT)lparam)->lpCreateParams;
-			// .. and then stored for later lookup
-			SetWindowLongPtr(hwnd, GWL_USERDATA, (LONG_PTR)w);
-			break;
-		}
-
-		case WM_DESTROY:
-		{
-			// Event fired when the window is destroyed
-			window* w = (window*)GetWindowLong(hwnd, GWL_USERDATA);
-			w->onDestroy();
-			::PostQuitMessage(0);
-			break;
-		}
-
-		case WM_KEYDOWN:
-		{
-			if (wparam == VK_F1) {
-				show_ok_dialog("F1 Pressed");
+			case WM_CREATE:
+			{
+				// Event fired when the window is created collected here..
+				window* w = (window*)((LPCREATESTRUCT)lparam)->lpCreateParams;
+				// .. and then stored for later lookup
+				SetWindowLongPtr(hwnd, GWL_USERDATA, (LONG_PTR)w);
+				return 0;
 			}
+
+			case WM_DESTROY:
+			{
+				// Event fired when the window is destroyed
+				window* w = (window*)GetWindowLong(hwnd, GWL_USERDATA);
+				w->onDestroy();
+				::PostQuitMessage(0);
+				return 0;
+			}
+
+			case WM_KEYDOWN:
+				return get_key_pressed(wparam);
+
+			case WM_KEYUP:
+				return get_key_released(wparam);
+			
 		}
 
-		default:
-			return ::DefWindowProc(hwnd, msg, wparam, lparam);
-		}
-
-		return NULL;
+		return ::DefWindowProc(hwnd, msg, wparam, lparam);
 	}
 }
 
-window::window() {
+window::window() : keysPressed(0) {
 	buff = std::make_unique<COLORREF[]>(m_width * m_height);
 
 	WNDCLASSEX wc;
@@ -106,7 +135,22 @@ bool window::broadcast() {
 
 	while (::PeekMessage(&msg, NULL, 0, 0, PM_REMOVE) > 0) {
 		TranslateMessage(&msg);
-		DispatchMessage(&msg);
+		LRESULT const result = DispatchMessage(&msg);
+		//TODO: this is dangerous!! WndProc can return some value if it falls through switch statement!
+		//if (result != 0) {
+		
+		assign_key(result);
+		//TODO: keyDown needs to be or, keyUp needs to be and? hmmmm
+		//keysPressed |= result;
+		//if (result == UP) {
+		//	//show_ok_dialog("yay2");
+		//}
+		//if (keysPressed & UP) {
+		//	//show_ok_dialog("yay");
+		//}
+
+		//}
+		//show_ok_dialog(std::bitset<8 * sizeof(keysPressed)>(x).to_string());
 	}
 
 	return true;
@@ -155,6 +199,38 @@ void window::onUpdate() {
 void window::onDestroy() {
 	m_is_run = false;
 }
+
+namespace {
+	inline void or_result(LRESULT orWith, short* orTo) {
+		*orTo |= orWith;
+	}
+}
+
+void window::assign_key(LRESULT result) {
+	//TODO: there has got to be a better way..
+	switch (result) {
+		case pressed::UP:
+		case pressed::DOWN:
+		case pressed::LEFT:
+		case pressed::RIGHT:
+			or_result(result, &keysPressed);
+			break;
+
+		case released::UP:
+			keysPressed &= ~pressed::UP;
+			break;
+		case released::DOWN:
+			keysPressed &= ~pressed::DOWN;
+			break;
+		case released::LEFT:
+			keysPressed &= ~pressed::LEFT;
+			break;
+		case released::RIGHT:
+			keysPressed &= ~pressed::RIGHT;
+			break;
+	}
+}
+
 
 void show_ok_dialog(std::string const& message) {
 	MessageBox(NULL, message.c_str(), "title", MB_OKCANCEL);

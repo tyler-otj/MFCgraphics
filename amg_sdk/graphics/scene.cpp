@@ -6,7 +6,7 @@ scene::scene(mat4x4 const& projection, vec3d const& cameraVec, vec3d const& ligh
 	matProj(projection), lightDirection(lightDir), meshes(0)
 {
 	vec3d up = {0, 1, 0};
-	vec3d camera;
+	//vec3d camera;
 	vec3d lookDir = {0, 0, 1};
 	vec3d target = camera + lookDir;
 	mat4x4 matCamera = mat4x4::pointAt(camera, target, up);
