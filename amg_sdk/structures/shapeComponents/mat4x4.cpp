@@ -3,9 +3,9 @@
 mat4x4 mat4x4::dotProduct(mat4x4 const& other) const {
 	mat4x4 reply;
 
-	for (int row = 0; row < 4; ++row) {
-		for (int col = 0; col < 4; ++col) {
-			reply.m[row][col] = m[row][0] * other.m[0][col] + m[row][1] * other.m[1][col] + m[row][2] * other.m[2][col] + m[row][3] * other.m[3][col];
+	for (int row = 0; row < 3; ++row) {
+		for (int col = 0; col < 3; ++col) {
+			reply.m[row][col] = m[row][0] * other.m[0][col] + m[row][1] * other.m[1][col] + m[row][2] * other.m[2][col]; // + m[row][3] * other.m[3][col]; //TODO?
 		}
 		    //reply.m[row][0] = m[row][0] * other.m[0][0] + m[row][1] * other.m[1][0] + m[row][2] * other.m[2][0] + m[row][3] * other.m[3][0];
 		    //reply.m[row][1] = m[row][0] * other.m[0][1] + m[row][1] * other.m[1][1] + m[row][2] * other.m[2][1] + m[row][3] * other.m[3][1];
@@ -68,7 +68,8 @@ mat4x4 mat4x4::pointAt(vec3d const& pos, vec3d const& target, vec3d const& up) {
 	vec3d newUp = up - a;
 	newUp.normalize();
 
-	vec3d newRight = newUp.crossProduct(newForward);
+	//vec3d newRight = newUp.crossProduct(newForward);
+	vec3d newRight = newForward.crossProduct(newUp);
 
 	//dimensioning and translation matrix
 	mat4x4 matrix;

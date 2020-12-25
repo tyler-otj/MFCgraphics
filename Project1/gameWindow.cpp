@@ -25,17 +25,21 @@ void gameWindow::draw() {
 	float fTheta = 0.03f * m_elapsedTime;
 	
 	if (keysPressed & pressed::UP) {
-		m_scene.camera.y += .03f * fTheta;
+		m_scene.camera.y += .03f;
 	} else if (keysPressed & pressed::DOWN) {
-		m_scene.camera.y -= .03f * fTheta;
+		m_scene.camera.y -= .03f;
+	}
+
+	if (keysPressed & pressed::RIGHT) {
+		m_scene.camera.x += 0.3f;
+	} else if (keysPressed & pressed::LEFT) {
+		m_scene.camera.x -= 0.3f;
 	}
 	
 	std::vector<triangle> triToRaster;
 
-
 	//TODO: integrate this into scene
 	vec3d up = {0, 1, 0};
-	//vec3d camera;
 	vec3d lookDir = {0, 0, 1};
 	vec3d target = m_scene.camera + lookDir;
 	mat4x4 matCamera = mat4x4::pointAt(m_scene.camera, target, up);
@@ -45,27 +49,17 @@ void gameWindow::draw() {
 	for (mesh const& m : m_scene.get_meshes()) {
 		for (int i = m.tris.size() - 1; i >= 0; --i) {
 			//triangle working = m.tris.at(i).getTriMultByMatrix(mat4x4::rotateX(fTheta));
-			triangle working = m.tris[i].getTriMultByMatrix(mat4x4::rotateY(0));
+			/*triangle working = m.tris[i].getTriMultByMatrix(mat4x4::rotateY(0));*/
+			triangle working = m.tris[i];
 
 			working.translateZ(23.0f);
 
-			//vec3d normal = working.getNormal();
-
-			//if camera ray is aligned with normal, it is visible (only draw visible faces)
-			//if (normal.dotProduct(working.vec[0] - camera) < 0.0f) {
-			if (true) {
-				//float const dotProduct = normal.dotProduct(m_scene.lightDirection);
-				
-				/*triangle triViewed = working.getTriMultByMatrix(m_scene.view);*/
-				triangle triViewed = working.getTriMultByMatrix(view);
-				triangle triProjected = triViewed.getTriMultByMatrix(m_scene.matProj);
-				triProjected.scaleIntoView((float)m_width, (float)m_height);
-				triToRaster.push_back(triProjected);
-
-				//working.multByMatrix(m_scene.matProj);
-				//working.scaleIntoView((float)m_width, (float)m_height);
-				//triToRaster.push_back(working);
-			}
+			//triangle triProjected = working.getTriMultByMatrix(m_scene.matProj);
+			
+			triangle triViewed = working.getTriMultByMatrix(view);
+			triangle triProjected = triViewed.getTriMultByMatrix(m_scene.matProj);
+			triProjected.scaleIntoView((float)m_width, (float)m_height);
+			triToRaster.push_back(triProjected);
 		}
 	}
 

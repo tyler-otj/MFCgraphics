@@ -36,8 +36,8 @@ void vec3d::operator+=(float const f) {
 }
 
 void vec3d::normalize() {
-	float const magnitude = sqrtf(x*x + y * y + z * z);
-	*this /= magnitude;
+	float const length = this->length();
+	*this /= length;
 }
 
 void vec3d::multByMatrix(mat4x4 const& m) {
@@ -77,12 +77,7 @@ vec3d vec3d::crossProduct(vec3d const& other) const {
 	float const y = z * other.x - x * other.z;
 	float const z = x * other.y - y * other.x;
 
-	vec3d reply;
-	reply.x = x;
-	reply.y = y;
-	reply.z = z;
-
-	return reply;
+	return vec3d{x, y, z};
 }
 
 vec3d vec3d::getVecMultByMatrix(mat4x4 const& m) const {
@@ -104,4 +99,8 @@ vec3d vec3d::getVecMultByMatrix(mat4x4 const& m) const {
 	}
 
 	return reply;
+}
+
+float vec3d::length() const {
+	return sqrtf(this->dotProduct(*this));
 }

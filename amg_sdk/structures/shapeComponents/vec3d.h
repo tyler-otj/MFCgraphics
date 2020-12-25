@@ -22,4 +22,5 @@ struct vec3d {
 	float dotProduct(vec3d const& other) const;
 	vec3d crossProduct(vec3d const& other) const;
 	vec3d getVecMultByMatrix(mat4x4 const& m) const;
+	float length() const;
 };
